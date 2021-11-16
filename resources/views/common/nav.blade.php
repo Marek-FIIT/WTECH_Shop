@@ -14,33 +14,20 @@ use App\Models\Brand;
     <div class="collapse navbar-collapse" id="navbar-content2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a href="#">AKCIA</a>
+                <a class='nav-title' href="{{ url('brands') }}">Akcia</a>
             </li>
             <li class="nav-item">
-                <a href="#">NOVINKY</a>
+                <a class='nav-title' href="#">Novinky</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="ndropdown-toggle" href="#" id="brands" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    ZNAČKY
+                <a data-target="{{ url('brands') }}" class="ndropdown-toggle nav-title" href="{{ url('brands') }}" id="brands" aria-haspopup="true" aria-expanded="false">
+                    Značky
                 </a>
                 <div class="brand dropdown-menu pre-scrollable" aria-labelledby="brands">
                     <?php $brands = Brand::orderby('name')->get() ?>
                     @foreach($brands as $brand)
                         <a href="#">{{$brand->name}}</a>
                     @endforeach
-                    <!--<a href="#">Adidas</a>
-                    <a href="#">Puma</a>
-                    <a href="#">Nike</a>
-                    <a href="#">Gucci</a>
-                    <a href="#">The North Face</a>
-                    <a href="#">Ocun</a>
-                    <a href="#">Patagonia</a>
-                    <a href="#">Calvin Klein</a>
-                    <a href="#">LEVI'S</a>
-                    <a href="#">Champion</a>
-                    <a href="#">Fila</a>
-                    <a href="#">Columbia</a>
-                    <a href="#">Under Armour</a>-->
                 </div>
             </li>
             <?php
@@ -48,7 +35,7 @@ use App\Models\Brand;
                 foreach($firstLevelCategories as $cat1)
                 {
                     echo '<li class="nav-item dropdown">';
-                    echo '<a href="#" id="';
+                    echo '<a class="nav-title" href="#" id="';
                     echo $cat1->name;
                     echo '" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
                     echo $cat1->name;
@@ -73,7 +60,10 @@ use App\Models\Brand;
                             echo $cat3->name;
                             echo '</a>';
                         }
+                        echo '</div>';
                     }
+                    echo '</div>';
+                    echo '</li>';
                 }
             ?>
             <!--

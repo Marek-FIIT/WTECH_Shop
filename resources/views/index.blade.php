@@ -3,6 +3,7 @@
 @section('title', 'Home')
 
 @section('scripts')
+    <link rel="stylesheet" href="{{ asset('css/homepage_style.css') }}">
 @endsection
 
 @section('main')
