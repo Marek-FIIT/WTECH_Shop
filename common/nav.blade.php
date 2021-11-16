@@ -14,13 +14,13 @@ use App\Models\Brand;
     <div class="collapse navbar-collapse" id="navbar-content2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class='nav-title' href="#">Akcia</a>
+                <a class='nav-title' href="{{ url('brands') }}">Akcia</a>
             </li>
             <li class="nav-item">
                 <a class='nav-title' href="#">Novinky</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="ndropdown-toggle nav-title" href="#" id="brands" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a data-target="{{ url('brands') }}" class="ndropdown-toggle nav-title" href="{{ url('brands') }}" id="brands" aria-haspopup="true" aria-expanded="false">
                     Značky
                 </a>
                 <div class="brand dropdown-menu pre-scrollable" aria-labelledby="brands">

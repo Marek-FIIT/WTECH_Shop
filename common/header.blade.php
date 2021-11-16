@@ -13,7 +13,7 @@
         </ul>
     </div>
     <!--title-->
-    <a class="navbar-brand mx-auto" href="#">LOGO</a>
+    <a class="navbar-brand mx-auto" href="{{ url('/') }}">LOGO</a>
     <!--options bar search, login, bookmark, cart-->
     <ul class="navbar-nav ml-auto">
         <li><a data-toggle="collapse" href="#searchbar" role="button" aria-expanded="false" aria-controls="collapseExample">
