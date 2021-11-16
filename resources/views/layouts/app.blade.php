@@ -9,6 +9,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <link rel="stylesheet" href="{{ asset('css/homepage_style.css') }}">
+    <script src="{{ asset('js/Login_Register_swap.js') }}"></script>
     @yield('scripts')
 </head>
 <body>

@@ -3,7 +3,6 @@
 @section('title', 'Home')
 
 @section('scripts')
-<script src="{{ asset('js/Login_Register_swap.js') }}"></script>
 @endsection
 
 @section('main')

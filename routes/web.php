@@ -17,8 +17,5 @@ use App\Models\ThirdLevelCategory;
 */
 
 Route::get('/', function () {
-
-
     return view('index');//->with('categories', $categories);
-    //return view('index');
 });

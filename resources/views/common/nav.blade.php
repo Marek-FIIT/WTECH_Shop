@@ -2,6 +2,7 @@
 use App\Models\FirstLevelCategory;
 use App\Models\SecondLevelCategory;
 use App\Models\ThirdLevelCategory;
+use App\Models\Brand;
 ?>
 
 <nav class="navbar navbar-expand-md navbar-dark">
@@ -23,7 +24,11 @@ use App\Models\ThirdLevelCategory;
                     ZNAČKY
                 </a>
                 <div class="brand dropdown-menu pre-scrollable" aria-labelledby="brands">
-                    <a href="#">Adidas</a>
+                    <?php $brands = Brand::orderby('name')->get() ?>
+                    @foreach($brands as $brand)
+                        <a href="#">{{$brand->name}}</a>
+                    @endforeach
+                    <!--<a href="#">Adidas</a>
                     <a href="#">Puma</a>
                     <a href="#">Nike</a>
                     <a href="#">Gucci</a>
@@ -35,7 +40,7 @@ use App\Models\ThirdLevelCategory;
                     <a href="#">Champion</a>
                     <a href="#">Fila</a>
                     <a href="#">Columbia</a>
-                    <a href="#">Under Armour</a>
+                    <a href="#">Under Armour</a>-->
                 </div>
             </li>
             <?php
