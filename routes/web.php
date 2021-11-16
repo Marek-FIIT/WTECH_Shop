@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\FirstLevelCategory;
+use App\Models\SecondLevelCategory;
+use App\Models\ThirdLevelCategory;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('index');
+
+
+    return view('index');//->with('categories', $categories);
+    //return view('index');
 });

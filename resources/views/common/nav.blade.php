@@ -1,3 +1,9 @@
+<?php
+use App\Models\FirstLevelCategory;
+use App\Models\SecondLevelCategory;
+use App\Models\ThirdLevelCategory;
+?>
+
 <nav class="navbar navbar-expand-md navbar-dark">
     <!--make menu button if screen smaller than lg-->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +38,40 @@
                     <a href="#">Under Armour</a>
                 </div>
             </li>
+            <?php
+                $firstLevelCategories = FirstLevelCategory::all();
+                foreach($firstLevelCategories as $cat1)
+                {
+                    echo '<li class="nav-item dropdown">';
+                    echo '<a href="#" id="';
+                    echo $cat1->name;
+                    echo '" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                    echo $cat1->name;
+                    echo '</a>';
+                    echo '<div class="dropdown-menu dropdown-multicolumn p-0" aria-labelledby="';
+                    echo $cat1->name;
+                    echo '">';
+
+                    $secondLevelCategories = SecondLevelCategory::where('1st_level_category_id', $cat1->id)->get();
+                    foreach($secondLevelCategories as $cat2)
+                    {
+                        echo '<div class="dropdown-col">';
+                        echo '<a href="#" class="dropdown-item category-title">';
+                        echo $cat2->name;
+                        echo '</a>';
+
+
+                        $thirdLevelCategories = ThirdLevelCategory::where('2nd_level_category_id', $cat2->id)->get();
+                        foreach ($thirdLevelCategories as $cat3)
+                        {
+                            echo '<a href="#" class="dropdown-item category-item">';
+                            echo $cat3->name;
+                            echo '</a>';
+                        }
+                    }
+                }
+            ?>
+            <!--
             <li class="nav-item dropdown">
                 <a href="#" id="clothes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     OBLEČENIE
@@ -130,7 +170,7 @@
                         <a href="#" class="dropdown-item category-item">Prstene</a>
                     </div>
                 </div>
-            </li>
+            </li>-->
         </ul>
     </div>
 </nav>
