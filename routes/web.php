@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\FirstLevelCategory;
 use App\Models\SecondLevelCategory;
 use App\Models\ThirdLevelCategory;
+use App\Http\Controllers\BrandsController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +21,5 @@ use App\Models\ThirdLevelCategory;
 Route::get('/', function () {
     return view('index');//->with('categories', $categories);
 });
+
+Route::resource('brands', BrandsController::class);
