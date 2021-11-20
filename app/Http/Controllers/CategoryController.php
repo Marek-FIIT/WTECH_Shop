@@ -11,6 +11,7 @@ use App\Models\ThirdLevelCategory;
 use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Material;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use League\Flysystem\Exception;
 
@@ -146,9 +147,6 @@ class CategoryController extends Controller
                     $sort = $value;
             }
 
-            if (sizeof($filteredSizes) != 0)
-                $products = $products->whereIn('products.size', $filteredSizes);
-
             if (sizeof($filteredBrands) != 0)
                 $products = $products->whereIn('products.id', function ($query) use ($filteredBrands) {
                     $query->select('product_brand.product_id')
@@ -167,12 +165,17 @@ class CategoryController extends Controller
                         ->get();
                 });
 
-            if (sizeof($filteredColors) != 0)
-                $products = $products->whereIn('products.color_id', function ($query) use ($filteredColors) {
-                    $query->select('id')
-                        ->from('colors')
-                        ->whereIn('name', $filteredColors)
-                        ->get();
+            if (sizeof($filteredColors) != 0 or sizeof($filteredSizes) != 0)
+                $products = $products->whereIn('products.id', function ($query) use ($filteredColors, $filteredSizes) {
+                    $query->select('product_variants.product_id')
+                          ->from('product_variants');
+                    if (sizeof($filteredColors) != 0)
+                        $query->join('colors', 'product_variants.color_id', '=', 'colors.id')
+                              ->whereIn('colors.name', $filteredColors);
+                    if (sizeof($filteredSizes) != 0)
+                        $query->whereIn('product_variants.size', $filteredSizes);
+
+                    $query->get();
                 });
 
             $products = $products->where('products.price', '>=', $gte)
@@ -225,16 +228,16 @@ class CategoryController extends Controller
             }
         }
 
-        $colors = Color::orderBy('name')->get();
-        $brands = Brand::orderBy('name')->get();
+        $colors    = Color::orderBy('name')->get();
+        $brands    = Brand::orderBy('name')->get();
         $materials = Material::orderBy('name')->get();
 
-        $sizes  = array();
-        for ($i = 0; $i < sizeof($products); $i++)
-        {
-            $sizes[$i]  = $products[$i]->size;
-        }
-        $sizes = array_unique($sizes);
+        $sizes     = ProductVariant::select('size')
+                                   ->whereIn('product_id', array_column($products->toArray(), 'id'))
+                                   ->get();
+
+        $sizes = array_column($sizes->toArray(), 'size');
+        $sizes = array_unique((array)$sizes);
         usort($sizes, array($this, 'sizeCompare'));
 
 
@@ -242,7 +245,7 @@ class CategoryController extends Controller
 
         return view('category')->with(['products'=>$products,
                                             'chosenCategory'=>$categoryName,
-                                            'sizes'=>$sizes,
+                                            'sizes'=>(array)$sizes,
                                             'brands'=>$brands,
                                             'materials'=>$materials,
                                             'colors'=>$colors,
@@ -254,7 +257,7 @@ class CategoryController extends Controller
                                                                 'materials' => $filteredMaterials,
                                                                 'gte'       => $gte,
                                                                 'lte'       => $lte,
-                                                                'sort'      =>$sort]]);
+                                                                'sort'      => $sort]]);
     }
 }
 
