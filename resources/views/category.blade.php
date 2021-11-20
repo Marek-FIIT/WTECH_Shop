@@ -1,5 +1,4 @@
-<?php use Illuminate\Support\Facades\Request; ?>
-<?php $url = 'categories/' . explode('/', Request::fullUrl())[4]; ?>
+<?php $url = 'categories/' . explode('/', Illuminate\Support\Facades\Request::fullUrl())[4]; ?>
 
 @extends('layouts.app')
 
@@ -142,7 +141,7 @@
                                                value="{{ $materials[$i]->name }}"
                                                name="material_{{ $i }}"
                                                @if (in_array($materials[$i]->name, (array)$filters->materials))  <?php echo "checked='checked'";?> @endif>
-                                        <label for="{{ $i + 1 }}">{{ $materials[$i]->name }}</label><br>
+                                        <label for="material {{ $i + 1 }}">{{ $materials[$i]->name }}</label><br>
                                     @endfor
                                 </form>
                             </div>
