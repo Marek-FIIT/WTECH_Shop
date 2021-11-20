@@ -150,3 +150,21 @@ a.carousel-control-prev, a.carousel-control-next {
 .wish-icon .btn img {
     width: 100%;
 }
+
+.color_option {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.size_option {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#colorButton {
+    pointer-events: none;
+}
+
+#sizeButton {
+    pointer-events: none;
+}
