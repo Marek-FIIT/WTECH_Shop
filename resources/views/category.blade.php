@@ -50,17 +50,17 @@
                                 </div>
                                 <div class="dropdown-item m-0">
                                     <input type="radio" id="sort_hp" name="sort" value="hp"
-                                    @if ($filters->sort == 'hp')  <?php echo "checked='checked'";?> @endif>>
+                                    @if ($filters->sort == 'hp')  <?php echo "checked='checked'";?> @endif>
                                     <label for="sort_hp">Od najdrahších</label>
                                 </div>
                                 <div class="dropdown-item m-0">
                                     <input type="radio" id="sort_az" name="sort" value="az"
-                                    @if ($filters->sort == 'az')  <?php echo "checked='checked'";?> @endif>>
+                                    @if ($filters->sort == 'az')  <?php echo "checked='checked'";?> @endif>
                                     <label for="sort_az">A - Z</label>
                                 </div>
                                 <div class="dropdown-item m-0">
                                     <input type="radio" id="sort_za" name="sort" value="za"
-                                    @if ($filters->sort == 'za')  <?php echo "checked='checked'";?> @endif>>
+                                    @if ($filters->sort == 'za')  <?php echo "checked='checked'";?> @endif>
                                     <label for="sort_za">Z - A</label>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@
                                                id="{{ $sizes[$i] }}"
                                                value="{{ $sizes[$i] }}"
                                                name="size_{{ $i }}"
-                                               @if (in_array($colors[$i], (array)$filters->colors))  <?php echo "checked='checked'";?> @endif>
+                                               @if (in_array($sizes[$i], (array)$filters->sizes))  <?php echo "checked='checked'";?> @endif>
                                         <label for="{{ $sizes[$i] }}">{{ strtoupper($sizes[$i]) }}</label><br>
                                     @endfor
                                 </div>
@@ -134,7 +134,7 @@
                                 Materiál
                             </button>
                             <div class="brand dropdown-menu pre-scrollable" aria-labelledby="color-selection">
-                                <form class=" color-list mx-2">
+                                <div class=" color-list mx-2">
                                     @for($i = 0; $i < sizeof($materials); $i++)
                                         <input type="checkbox"
                                                id="material {{ $i + 1 }}"
@@ -143,7 +143,7 @@
                                                @if (in_array($materials[$i]->name, (array)$filters->materials))  <?php echo "checked='checked'";?> @endif>
                                         <label for="material {{ $i + 1 }}">{{ $materials[$i]->name }}</label><br>
                                     @endfor
-                                </form>
+                                </div>
                             </div>
                         </div>
                         <input type="submit" class="btn btn-secondary ml-3" value="Použiť filtre">
