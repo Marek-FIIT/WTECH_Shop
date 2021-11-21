@@ -20,7 +20,7 @@ class BrandsController extends Controller
         $colorsList = Color::orderBy('name')->get();
         $sidebarTitle = 'Značky';
         $name = $sidebarTitle;
-        $products = Product::all();
+        $products = Product::paginate(2);
         return view('brands.index')->with('data', [
             'brandslist' => $brandsList,
             'colorsList' => $colorsList,
@@ -63,7 +63,7 @@ class BrandsController extends Controller
         $colorsList = Color::orderBy('name')->get();
         $sidebarTitle = 'Značky';
         $name = Brand::select('name')->find($id)->name;
-        $products = Product::join('product_brand', 'products.id', '=', 'product_brand.product_id')->where('brand_id', $id)->get();
+        $products = Product::join('product_brand', 'products.id', '=', 'product_brand.product_id')->where('brand_id', $id)->paginate(2);
 
 
         return view('brands.index')->with('data', [
