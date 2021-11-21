@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Brand;
-
+use App\Models\Color;
+use App\Models\Product;
 
 class BrandsController extends Controller
 {
@@ -16,10 +17,16 @@ class BrandsController extends Controller
     public function index()
     {
         $brandsList = Brand::orderBy('name')->get();
-        $name = 'Značky';
+        $colorsList = Color::orderBy('name')->get();
+        $sidebarTitle = 'Značky';
+        $name = $sidebarTitle;
+        $products = Product::all();
         return view('brands.index')->with('data', [
             'brandslist' => $brandsList,
+            'colorsList' => $colorsList,
+            'sidebarTitle' => $sidebarTitle,
             'name' => $name,
+            'products' => $products,
         ]);
     }
 
@@ -52,7 +59,20 @@ class BrandsController extends Controller
      */
     public function show($id)
     {
-        //
+        $brandsList = Brand::orderBy('name')->get();
+        $colorsList = Color::orderBy('name')->get();
+        $sidebarTitle = 'Značky';
+        $name = Brand::select('name')->find($id)->name;
+        $products = Product::join('product_brand', 'products.id', '=', 'product_brand.product_id')->where('brand_id', $id)->get();
+
+
+        return view('brands.index')->with('data', [
+            'brandslist' => $brandsList,
+            'colorsList' => $colorsList,
+            'sidebarTitle' => $sidebarTitle,
+            'name' => $name,
+            'products' => $products
+        ]);
     }
 
     /**
