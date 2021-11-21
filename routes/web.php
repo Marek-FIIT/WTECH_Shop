@@ -37,3 +37,5 @@ Route::get('/', function () {
 
     return view('index');//->with('categories', $categories);
 });
+
+Route::resource('brands', BrandsController::class);
