@@ -38,4 +38,8 @@ Route::get('/', function () {
     return view('index');//->with('categories', $categories);
 });
 
+use App\Http\Controllers\BrandsController;
 Route::resource('brands', BrandsController::class);
+
+use App\Http\Controllers\CartController;
+Route::resource('cart', CartController::class);
