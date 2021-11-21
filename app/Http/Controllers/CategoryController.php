@@ -99,19 +99,19 @@ class CategoryController extends Controller
         switch (1) {
             case sizeof($category1):
                 $products = Product::join('3rd_level_categories', 'products.3rd_level_category_id', '=', '3rd_level_categories.id')
-                                   ->join('2nd_level_categories', '3rd_level_categories.2nd_level_category_id', '=', '2nd_level_categories.id')
-                                   ->join('1st_level_categories', '2nd_level_categories.1st_level_category_id', '=', '1st_level_categories.id')
-                                   ->where('1st_level_categories.name', '=', $categoryName);
+                    ->join('2nd_level_categories', '3rd_level_categories.2nd_level_category_id', '=', '2nd_level_categories.id')
+                    ->join('1st_level_categories', '2nd_level_categories.1st_level_category_id', '=', '1st_level_categories.id')
+                    ->where('1st_level_categories.name', '=', $categoryName);
                 break;
             case sizeof($category2):
                 $products = Product::join('3rd_level_categories', 'products.3rd_level_category_id', '=', '3rd_level_categories.id')
-                                   ->join('2nd_level_categories', '3rd_level_categories.2nd_level_category_id', '=', '2nd_level_categories.id')
-                                   ->where('2nd_level_categories.name', '=', $categoryName);
+                    ->join('2nd_level_categories', '3rd_level_categories.2nd_level_category_id', '=', '2nd_level_categories.id')
+                    ->where('2nd_level_categories.name', '=', $categoryName);
 
                 break;
             case sizeof($category3):
                 $products = Product::join('3rd_level_categories', 'products.3rd_level_category_id', '=', '3rd_level_categories.id')
-                                   ->where('3rd_level_categories.name', '=', $categoryName);
+                    ->where('3rd_level_categories.name', '=', $categoryName);
                 break;
         }
         $filteredSizes = array();
@@ -168,10 +168,10 @@ class CategoryController extends Controller
             if (sizeof($filteredColors) != 0 or sizeof($filteredSizes) != 0)
                 $products = $products->whereIn('products.id', function ($query) use ($filteredColors, $filteredSizes) {
                     $query->select('product_variants.product_id')
-                          ->from('product_variants');
+                        ->from('product_variants');
                     if (sizeof($filteredColors) != 0)
                         $query->join('colors', 'product_variants.color_id', '=', 'colors.id')
-                              ->whereIn('colors.name', $filteredColors);
+                            ->whereIn('colors.name', $filteredColors);
                     if (sizeof($filteredSizes) != 0)
                         $query->whereIn('product_variants.size', $filteredSizes);
 
@@ -179,7 +179,7 @@ class CategoryController extends Controller
                 });
 
             $products = $products->where('products.price', '>=', $gte)
-                                 ->where('products.price', '<=', $lte);
+                ->where('products.price', '<=', $lte);
 
             switch ($sort)
             {
@@ -206,7 +206,7 @@ class CategoryController extends Controller
         $products = $products->select('products.*');
 
         error_log($products->toSql());
-        $products = $products->get();
+        $products = $products->paginate(2);
 
         $categories = array();//[][][] = "000";
         $firstLevelCategories = FirstLevelCategory::all();//orderBy('name')->get();
@@ -222,7 +222,7 @@ class CategoryController extends Controller
                 $thirdLevelCategories = ThirdLevelCategory::where('2nd_level_category_id', $secondLevelCategories[$j]->id)->orderBy('name')->get();
 
                 for ($k = 0; $k < sizeof($thirdLevelCategories); $k++) {
-                     if ($categoryName == $thirdLevelCategories[$k]->name) $superCategory = $firstLevelCategories[$i]->name;
+                    if ($categoryName == $thirdLevelCategories[$k]->name) $superCategory = $firstLevelCategories[$i]->name;
                     $categories[$firstLevelCategories[$i]->name][$secondLevelCategories[$j]->name][$k] = $thirdLevelCategories[$k]->name;
                 }
             }
@@ -233,32 +233,35 @@ class CategoryController extends Controller
         $materials = Material::orderBy('name')->get();
 
         $sizes     = ProductVariant::select('size')
-                                   ->whereIn('product_id', array_column($products->toArray(), 'id'))
-                                   ->get();
+            ->whereIn('product_id', array_column($products->toArray(), 'id'))
+            ->get();
 
         $sizes = array_column($sizes->toArray(), 'size');
         $sizes = array_unique((array)$sizes);
         usort($sizes, array($this, 'sizeCompare'));
 
 
-
+        error_log('zaciatok logu');
+        error_log(sizeof($brands));
+        error_log(sizeof($sizes));
+        error_log(sizeof($materials));
+        error_log(sizeof($colors));
+        error_log('koniec logu');
 
         return view('category')->with(['products'=>$products,
-                                            'chosenCategory'=>$categoryName,
-                                            'sizes'=>(array)$sizes,
-                                            'brands'=>$brands,
-                                            'materials'=>$materials,
-                                            'colors'=>$colors,
-                                            'categories'=>(object)['superCategory' => $superCategory,
-                                                                   'subCategories' => $categories[$superCategory]],
-                                            'filters'=>(object)['sizes'     => $filteredSizes,
-                                                                'brands'    => $filteredBrands,
-                                                                'colors'    => $filteredColors,
-                                                                'materials' => $filteredMaterials,
-                                                                'gte'       => $gte,
-                                                                'lte'       => $lte,
-                                                                'sort'      => $sort]]);
+            'chosenCategory'=>$categoryName,
+            'sizes'=>(array)$sizes,
+            'brands'=>$brands,
+            'materials'=>$materials,
+            'colors'=>$colors,
+            'categories'=>(object)['superCategory' => $superCategory,
+                'subCategories' => $categories[$superCategory]],
+            'filters'=>(object)['sizes'     => $filteredSizes,
+                'brands'    => $filteredBrands,
+                'colors'    => $filteredColors,
+                'materials' => $filteredMaterials,
+                'gte'       => $gte,
+                'lte'       => $lte,
+                'sort'      => $sort]]);
     }
 }
-
-
