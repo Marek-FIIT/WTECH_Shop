@@ -5,7 +5,7 @@ use App\Models\ThirdLevelCategory;
 use App\Models\Brand;
 ?>
 
-<nav class="navbar navbar-expand-md navbar-dark">
+<nav class="navbar navbar-expand-md navbar-dark" id="categories">
     <!--make menu button if screen smaller than lg-->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -14,7 +14,7 @@ use App\Models\Brand;
     <div class="collapse navbar-collapse" id="navbar-content2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class='nav-title' href="{{ url('brands') }}">Akcia</a>
+                <a class='nav-title' href="#">Akcia</a>
             </li>
             <li class="nav-item">
                 <a class='nav-title' href="#">Novinky</a>
@@ -26,7 +26,7 @@ use App\Models\Brand;
                 <div class="brand dropdown-menu pre-scrollable" aria-labelledby="brands">
                     <?php $brands = Brand::orderby('name')->get() ?>
                     @foreach($brands as $brand)
-                        <a href="#">{{$brand->name}}</a>
+                        <a href="{{ url('brands', $brand->id ) }}">{{$brand->name}}</a>
                     @endforeach
                 </div>
             </li>
@@ -35,9 +35,13 @@ use App\Models\Brand;
                 foreach($firstLevelCategories as $cat1)
                 {
                     echo '<li class="nav-item dropdown">';
-                    echo '<a class="nav-title" href="#" id="';
+                    echo '<a data-target="';
+                    echo url("categories", $cat1->name );
+                    echo '" class="ndropdown-toggle nav-title" href="';
+                    echo url("categories", $cat1->name );
+                    echo '" id="';
                     echo $cat1->name;
-                    echo '" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                    echo '" aria-haspopup="true" aria-expanded="false">';
                     echo $cat1->name;
                     echo '</a>';
                     echo '<div class="dropdown-menu dropdown-multicolumn p-0" aria-labelledby="';
@@ -48,7 +52,9 @@ use App\Models\Brand;
                     foreach($secondLevelCategories as $cat2)
                     {
                         echo '<div class="dropdown-col">';
-                        echo '<a href="#" class="dropdown-item category-title">';
+                        echo '<a href="';
+                        echo url("categories", $cat2->name );
+                        echo '" class="dropdown-item category-title">';
                         echo $cat2->name;
                         echo '</a>';
 
@@ -56,7 +62,9 @@ use App\Models\Brand;
                         $thirdLevelCategories = ThirdLevelCategory::where('2nd_level_category_id', $cat2->id)->get();
                         foreach ($thirdLevelCategories as $cat3)
                         {
-                            echo '<a href="#" class="dropdown-item category-item">';
+                            echo '<a href="';
+                            echo url("categories", $cat3->name );
+                            echo '" class="dropdown-item category-item">';
                             echo $cat3->name;
                             echo '</a>';
                         }
