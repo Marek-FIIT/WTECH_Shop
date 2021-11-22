@@ -49,15 +49,15 @@
                         <!--product in cart information-->
                         <section class="col-lg-9 col-md-12">
                             @isset($products)
-                            @foreach($products as $product)
-                                    <div class="card flex-row p-3 m-5">
+                                @foreach($products as $product)
+                                    <div class="card flex-row p-3 m-5" id="{{ $product[0]->id }}">
                                         <div class="row">
                                             <img class="img-product ml-3" src="{{ asset('images/'.$product[0]->src_image) }}" alt="{{$product[0]->name}}" />
                                             <div class="card-basic p-0 mx-5">
-                                                <h5 class="card-title">{{$product[0]->name}}</h5>
-                                                <p class="card-text">Veľkosť: univerzálna</p>
-                                                <p class="card-text">Farba: čierna</p>
-                                                <p class="card-text">{{$product[0]->price}} €</p>
+                                                <h5 class="card-title productName" id="productName{{ $product[0]->id }}">{{$product[0]->name}}</h5>
+                                                <p class="card-text productSize"   id="productSize{{ $product[0]->id }}">Veľkosť: univerzálna</p>
+                                                <p class="card-text productColor"  id="productColor{{ $product[0]->id }}">Farba: čierna</p>
+                                                <p class="card-text productPrice"  id="productPrice{{ $product[0]->id }}">{{$product[0]->price}} €</p>
                                             </div>
                                             <div class="card-count p-0 mx-5">
                                                 <form action="">
@@ -65,7 +65,7 @@
                                                 </form>
                                                 <label for="{{$product[0]->id}}" class="card-text m-0">Počet:</label>
                                                 <form action="/count" method="get">
-                                                    <input name="count" id="{{$product[1]}}" type="number" value="{{$product[1]}}" min="1" max="1000" step="1" />
+                                                    <input class="productCount" name="count" id="productCount{{$product[1]}}" type="number" value="{{$product[1]}}" min="1" max="1000" step="1" />
                                                     <input type="hidden" value="{{$product[0]->id}}" name="id">
                                                     <input type="submit" class="btn btn-outline-secondary mt-1" value="Potvrdiť"/>
                                                 </form>
@@ -78,7 +78,7 @@
                                             </div>
                                         </div>
                                     </div>
-                            @endforeach
+                                @endforeach
                             @endisset
                         </section>
                         <!--contact, sale code, summary-->
@@ -102,9 +102,9 @@
                                     <h5 class="card-title">Celková suma</h5>
                                     <p>Spolu: {{$price}} €</p>
                                     <p>Zľavy: 0 €</p>
-                                    <p class="font-weight-bold">Celková cena: {{$price}} €</p>
+                                    <p class="font-weight-bold" id="sumProducts">Celková cena: {{$price}} €</p>
                                     <p>Celková cena bez DPH: {{$tax_free}} €</p>
-                                    <button type="submit" class="btn btn-primary btnNext">Ďalej</button>
+                                    <button type="button" class="btn btn-primary btnNext" id="showDeliveryPayment">Ďalej</button>
                                 </div>
                             </div>
                         </aside>
@@ -119,17 +119,17 @@
                                 <h5>Zvoľte spôsob dopravy:</h5>
                                 <div class="form-check">
                                     <input class="form-check-input deliveryRadio" type="radio" name="ragioDelivery" id="delivery_courier_radio" checked>
-                                    <label class="form-check-label" for="delivery_courier_radio">Kuriérom na adresu:</label>
+                                    <label class="form-check-label" for="delivery_courier_radio" id="delivery_courier_text">Kuriérom na adresu:</label>
                                     <label class="form-check-label" id="delivery_courier_price" for="delivery_courier_radio">3,99 €</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input deliveryRadio" type="radio" name="ragioDelivery" id="delivery_postoffice_radio">
-                                    <label class="form-check-label" for="delivery_postoffice_radio">Balík na poštu:</label>
+                                    <label class="form-check-label" for="delivery_postoffice_radio" id="delivery_postoffice_text">Balík na poštu:</label>
                                     <label class="form-check-label" id="delivery_postoffice_price" for="delivery_postoffice_radio">2,60 €</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input deliveryRadio" type="radio" name="ragioDelivery" id="delivery_inperson_radio">
-                                    <label class="form-check-label" for="delivery_inperson_radio">Osobne na predajni:</label>
+                                    <label class="form-check-label" for="delivery_inperson_radio" id="delivery_inperson_text">Osobne na predajni:</label>
                                     <label class="form-check-label" id="delivery_inperson_price" for="delivery_inperson_radio">0,00 €</label>
                                 </div>
                             </div>
@@ -138,17 +138,17 @@
                                 <h5>Zvoľte spôsob platby:</h5>
                                 <div class="form-check">
                                     <input class="form-check-input paymentRadio" type="radio" name="radioPayment" id="payment_transfer_radio" checked>
-                                    <label class="form-check-label" for="payment_transfer_radio">Prevodom na účet:</label>
+                                    <label class="form-check-label" for="payment_transfer_radio" id="payment_transfer_text">Prevodom na účet:</label>
                                     <label class="form-check-label" id="payment_transfer_price" for="payment_transfer_radio">0,00 €</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input paymentRadio" type="radio" name="radioPayment" id="payment_card_radio">
-                                    <label class="form-check-label" for="payment_card_radio">Kartou online:</label>
+                                    <label class="form-check-label" for="payment_card_radio" id="payment_card_text">Kartou online:</label>
                                     <label class="form-check-label" id="payment_card_price" for="payment_card_radio">0,00 €</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input paymentRadio" type="radio" name="radioPayment" id="payment_inperson_radio">
-                                    <label class="form-check-label" for="payment_inperson_radio">Na dobierku:</label>
+                                    <label class="form-check-label" for="payment_inperson_radio" id="payment_inperson_text">Na dobierku:</label>
                                     <label class="form-check-label" id="payment_inperson_price" for="payment_inperson_radio">0,50 €</label>
                                 </div>
                             </div>
@@ -170,11 +170,11 @@
                                     <p>Celkom za tovar: {{$price}} €</p>
                                     <p id="deliveryFee"></p><!--Doprava: +3,99 €</p>-->
                                     <p id="paymentFee"></p><!--Platba:  +0,00 €</p>-->
-                                    <p class="font-weight-bold">Celková cena: {{$price}} €</p>
-                                    <p>Celková cena bez DPH: {{$tax_free}} €</p>
+                                    <p class="font-weight-bold" id="sumPaymentDelivery">Celková cena: {{$price}} €</p>
+                                    <p id="sumPaymentDeliveryTaxFree">Celková cena bez DPH: {{$tax_free}} €</p>
                                     <div class="row">
-                                        <button class="btn btn-primary btnPrev mx-3" type="button">Späť</button>
-                                        <button class="btn btn-primary btnNext ml-3" type="button">Ďalej</button>
+                                        <button class="btn btn-primary btnPrev mx-3" id="hideDeliveryPayment" type="button">Späť</button>
+                                        <button class="btn btn-primary btnNext ml-3" id="showPersonalInfo" type="button">Ďalej</button>
                                     </div>
                                 </div>
                             </div>
@@ -266,11 +266,11 @@
                             <div class="card p-2">
                                 <div class="card-body">
                                     <h5 class="card-title">Celková suma</h5>
-                                    <p class="font-weight-bold">Celková cena: 322,32 €</p>
-                                    <p>Celková cena bez DPH: 258,60 €</p>
+                                    <p class="font-weight-bold" id="sumInfo">Celková cena: 322,32 €</p>
+                                    <p id="sumInfoTaxFree">Celková cena bez DPH: 258,60 €</p>
                                     <div class="row">
-                                        <button class="btn btn-primary btnPrev mx-3" type="button">Späť</button>
-                                        <button class="btn btn-primary btnNext ml-3" type="button">Ďalej</button>
+                                        <button class="btn btn-primary btnPrev mx-3" type="button" id="hidePersonalInfo">Späť</button>
+                                        <button class="btn btn-primary btnNext ml-3" type="button" id="showSummary">Ďalej</button>
                                     </div>
                                 </div>
                             </div>
@@ -281,7 +281,7 @@
                 <!--summary-->
                 <div id="content4" role="tabpanel" class="bs-stepper-pane container-fluid" aria-labelledby="CartSteppertrigger4">
                     <div class="row">
-                        <section class="col-md-8">
+                        <section class="col-md-8" id="summaryContent">
 
                         </section>
                         <aside class="col-md-4">
@@ -298,8 +298,8 @@
                             <div class="card p-2">
                                 <div class="card-body">
                                     <h5 class="card-title">Celková suma</h5>
-                                    <p class="font-weight-bold">Celková cena: 322,32 €</p>
-                                    <p>Celková cena bez DPH: 258,60 €</p>
+                                    <p class="font-weight-bold" id="sumSummary">Celková cena: 322,32 €</p>
+                                    <p id="sumSummaryTaxFree">Celková cena bez DPH: 258,60 €</p>
 
                                     <div class="row">
                                         <input class="mt-2" type="checkbox" id="bussinessTermsCheckbox">
@@ -307,8 +307,8 @@
                                     </div>
 
                                     <div class="row">
-                                        <button class="btn btn-primary btnPrev mx-3" type="button">Späť</button>
-                                        <button class="btn btn-primary btnNext ml-3" type="button">Potvdiť</button>
+                                        <button class="btn btn-primary btnPrev mx-3" type="button" id="hideSummary">Späť</button>
+                                        <button class="btn btn-primary btnNext ml-3" type="submit" id="confirmOrder">Potvdiť</button>
                                     </div>
                                 </div>
                             </div>
@@ -319,4 +319,3 @@
         </div>
     </main>
 @endsection
-
