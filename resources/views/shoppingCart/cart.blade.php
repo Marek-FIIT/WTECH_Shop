@@ -48,6 +48,7 @@
                     <div class="row">
                         <!--product in cart information-->
                         <section class="col-lg-9 col-md-12">
+                            @isset($products)
                             @foreach($products as $product)
                             <div class="card flex-row p-3 m-5">
                                 <div class="row">
@@ -59,18 +60,23 @@
                                         <p class="card-text">{{$product[0]->price}} €</p>
                                     </div>
                                     <div class="card-count p-0 mx-5">
-                                        <label for="count1" class="card-text m-0">Počet:</label>
-                                        <input class="count" id="count1" type="number" value="{{$product[1]}}" min="1" max="1000" step="1" />
+                                        <label for="{{$product[0]->id}}" class="card-text m-0">Počet:</label>
+                                        <input class="count" id="{{$product[0]->id}}" type="number" value="{{$product[1]}}" min="1" max="1000" step="1" />
+                                        <form action="/count" method="get">
+                                            <input type="hidden" value="{{$product[0]->id}}" name="count">
+                                            <input type="submit" class="btn btn-outline-secondary mt-1" value="Potvrdiť"/>
+                                        </form>
                                         <form action="{{url('cart', $product[0])}}" method="post">
                                             <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="product" value="{{$product[0]->id}}">
                                             {{ csrf_field() }}
-                                            <input type="hidden", name="product", value="{{$product[0]->id}}">
-                                            <input type="submit" class="btn btn-outline-secondary mt-5" value="Odobrať"/>
+                                            <input type="submit" class="btn btn-outline-secondary mt-1" value="Odobrať"/>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                             @endforeach
+                            @endisset
                         </section>
                         <!--contact, sale code, summary-->
                         <aside class="col-lg-3 col-md-12 mt-5">
@@ -95,11 +101,7 @@
                                     <p>Zľavy: 0 €</p>
                                     <p class="font-weight-bold">Celková cena: {{$price}} €</p>
                                     <p>Celková cena bez DPH: {{$tax_free}} €</p>
-                                    <form action="{{url('cart', [$product[0]->id])}}" method="POST">
-                                        <input type="hidden" name="_method" value="PUT">
-                                        {{ csrf_field() }}
-                                        <button type="submit" class="btn btn-primary btnNext" type="button">Ďalej</button>
-                                    </form>
+                                    <button type="submit" class="btn btn-primary btnNext">Ďalej</button>
                                 </div>
                             </div>
                         </aside>
@@ -162,11 +164,11 @@
                             <div class="card p-2">
                                 <div class="card-body">
                                     <h5 class="card-title">Celková suma</h5>
-                                    <p>Celkom za tovar: 322,32 €</p>
+                                    <p>Celkom za tovar: {{$price}} €</p>
                                     <p id="deliveryFee"></p><!--Doprava: +3,99 €</p>-->
                                     <p id="paymentFee"></p><!--Platba:  +0,00 €</p>-->
-                                    <p class="font-weight-bold">Celková cena: 326,31 €</p>
-                                    <p>Celková cena bez DPH: 271,93 €</p>
+                                    <p class="font-weight-bold">Celková cena: {{$price}} €</p>
+                                    <p>Celková cena bez DPH: {{$tax_free}} €</p>
                                     <div class="row">
                                         <button class="btn btn-primary btnPrev mx-3" type="button">Späť</button>
                                         <button class="btn btn-primary btnNext ml-3" type="button">Ďalej</button>
