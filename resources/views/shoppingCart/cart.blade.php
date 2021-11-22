@@ -50,31 +50,34 @@
                         <section class="col-lg-9 col-md-12">
                             @isset($products)
                             @foreach($products as $product)
-                            <div class="card flex-row p-3 m-5">
-                                <div class="row">
-                                    <img class="img-product ml-3" src="{{ asset('images/'.$product[0]->src_image) }}" alt="{{$product[0]->name}}" />
-                                    <div class="card-basic p-0 mx-5">
-                                        <h5 class="card-title">{{$product[0]->name}}</h5>
-                                        <p class="card-text">Veľkosť: univerzálna</p>
-                                        <p class="card-text">Farba: čierna</p>
-                                        <p class="card-text">{{$product[0]->price}} €</p>
+                                    <div class="card flex-row p-3 m-5">
+                                        <div class="row">
+                                            <img class="img-product ml-3" src="{{ asset('images/'.$product[0]->src_image) }}" alt="{{$product[0]->name}}" />
+                                            <div class="card-basic p-0 mx-5">
+                                                <h5 class="card-title">{{$product[0]->name}}</h5>
+                                                <p class="card-text">Veľkosť: univerzálna</p>
+                                                <p class="card-text">Farba: čierna</p>
+                                                <p class="card-text">{{$product[0]->price}} €</p>
+                                            </div>
+                                            <div class="card-count p-0 mx-5">
+                                                <form action="">
+
+                                                </form>
+                                                <label for="{{$product[0]->id}}" class="card-text m-0">Počet:</label>
+                                                <form action="/count" method="get">
+                                                    <input name="count" id="{{$product[1]}}" type="number" value="{{$product[1]}}" min="1" max="1000" step="1" />
+                                                    <input type="hidden" value="{{$product[0]->id}}" name="id">
+                                                    <input type="submit" class="btn btn-outline-secondary mt-1" value="Potvrdiť"/>
+                                                </form>
+                                                <form action="{{url('cart', $product[0])}}" method="post">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <input type="hidden" name="product" value="{{$product[0]->id}}">
+                                                    {{ csrf_field() }}
+                                                    <input type="submit" class="btn btn-outline-secondary mt-1" value="Odobrať"/>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="card-count p-0 mx-5">
-                                        <label for="{{$product[0]->id}}" class="card-text m-0">Počet:</label>
-                                        <input class="count" id="{{$product[0]->id}}" type="number" value="{{$product[1]}}" min="1" max="1000" step="1" />
-                                        <form action="/count" method="get">
-                                            <input type="hidden" value="{{$product[0]->id}}" name="count">
-                                            <input type="submit" class="btn btn-outline-secondary mt-1" value="Potvrdiť"/>
-                                        </form>
-                                        <form action="{{url('cart', $product[0])}}" method="post">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <input type="hidden" name="product" value="{{$product[0]->id}}">
-                                            {{ csrf_field() }}
-                                            <input type="submit" class="btn btn-outline-secondary mt-1" value="Odobrať"/>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
                             @endforeach
                             @endisset
                         </section>
