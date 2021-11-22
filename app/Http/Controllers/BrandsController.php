@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Material;
+use App\Models\ProductVariant;
+use ErrorException;
 use Illuminate\Http\Request;
 use App\Models\Brand;
 use App\Models\Color;
@@ -9,6 +12,95 @@ use App\Models\Product;
 
 class BrandsController extends Controller
 {
+    private function filter($products)
+    {
+
+        $filteredSizes = array();
+        $filteredColors = array();
+        $filteredMaterials = array();
+
+        $lte = 1000;
+        $gte = 0;
+        $sort = 'az';
+        try {
+            $length = sizeof(explode('/', url()->full()));
+            $queryString = explode('?', explode('/', url()->full())[$length-1])[1];//parse_url(url()->full(), PHP_URL_QUERY);
+
+            foreach (explode('&', $queryString) as $parameter) {
+                $key = explode('=', $parameter)[0];
+                $value = explode('=', $parameter)[1];
+
+                if (str_contains($key, 'size'))
+                    $filteredSizes[$key] = $value;
+                if (str_contains($key, 'color'))
+                    $filteredColors[$key] = $value;
+                if (str_contains($key, 'material'))
+                    $filteredMaterials[$key] = $value;
+
+                if ($key == 'price_gte')
+                    $gte = $value;
+                if ($key == 'price_lte')
+                    $lte = $value;
+
+                if ($key == 'sort')
+                    $sort = $value;
+            }
+
+            if (sizeof($filteredMaterials) != 0)
+                $products = $products->whereIn('products.id', function ($query) use ($filteredMaterials) {
+                    $query->select('product_material.product_id')
+                        ->from('product_material')
+                        ->join('materials', 'product_material.material_id', '=', 'materials.id')
+                        ->whereIn('materials.name', $filteredMaterials)
+                        ->get();
+                });
+
+            if (sizeof($filteredColors) != 0 or sizeof($filteredSizes) != 0)
+                $products = $products->whereIn('products.id', function ($query) use ($filteredColors, $filteredSizes) {
+                    $query->select('product_variants.product_id')
+                        ->from('product_variants');
+                    if (sizeof($filteredColors) != 0)
+                        $query->join('colors', 'product_variants.color_id', '=', 'colors.id')
+                            ->whereIn('colors.name', $filteredColors);
+                    if (sizeof($filteredSizes) != 0)
+                        $query->whereIn('product_variants.size', $filteredSizes);
+
+                    $query->get();
+                });
+
+            $products = $products->where('products.price', '>=', $gte)
+                ->where('products.price', '<=', $lte);
+
+            switch ($sort) {
+                case 'az':
+                    $products = $products->orderBy('products.name');
+                    break;
+                case 'za':
+                    $products = $products->orderByDesc('products.name');
+                    break;
+                case 'lp':
+                    $products = $products->orderBy('products.price');
+                    break;
+                case 'hp':
+                    $products = $products->orderByDesc('products.price');
+                    break;
+            }
+
+        }
+        catch(ErrorException $ex)
+        {
+            $products = $products->orderBy('products.name');
+        }
+
+        return (object)['products'  => $products->select('products.*')->paginate(2),
+                        'sizes'     => $filteredSizes,
+                        'colors'    => $filteredColors,
+                        'materials' => $filteredMaterials,
+                        'gte'       => $gte,
+                        'lte'       => $lte,
+                        'sort'      => $sort];
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,18 +108,30 @@ class BrandsController extends Controller
      */
     public function index()
     {
+        $products = Product::where('id', '>', 0);
+
+        $filtered = $this->filter($products);
+        $products = $filtered->products;
+        //unset($filtered['products']);
+
+
         $brandsList = Brand::orderBy('name')->get();
         $colorsList = Color::orderBy('name')->get();
-        $sidebarTitle = 'Značky';
-        $name = $sidebarTitle;
-        $products = Product::paginate(2);
-        return view('brands.index')->with('data', [
-            'brandslist' => $brandsList,
-            'colorsList' => $colorsList,
-            'sidebarTitle' => $sidebarTitle,
-            'name' => $name,
-            'products' => $products,
-        ]);
+        $sizeList   = ProductVariant::select('size')
+                                    ->whereIn('product_id', array_column($products->items(), 'id'))
+                                    ->get();
+        $materialsList = Material::orderBy('name')->get();
+
+        $name = 'Značky';
+
+        //var_dump($sizeList);
+        return view('brands.index')->with(['brandsList'   => $brandsList,
+                                                'colorsList'   => $colorsList,
+                                                'sizesList'    => $sizeList,
+                                                'materialsList'=> $materialsList,
+                                                'name'         => $name,
+                                                'products'     => $products,
+                                                'filters'      => $filtered]);
     }
 
     /**
@@ -59,20 +163,31 @@ class BrandsController extends Controller
      */
     public function show($id)
     {
+        $products = Product::join('product_brand', 'products.id', '=', 'product_brand.product_id')
+            ->where('brand_id', $id);
+
+        $filtered = $this->filter($products);
+        $products = $filtered->products;
+        //unset($filtered['products']);
+
         $brandsList = Brand::orderBy('name')->get();
         $colorsList = Color::orderBy('name')->get();
-        $sidebarTitle = 'Značky';
+        $sizeList   = ProductVariant::select('size')
+                                    ->whereIn('product_id', array_column($products->items(), 'id'))
+                                    ->get();
+        $materialsList = Material::orderBy('name')->get();
+
         $name = Brand::select('name')->find($id)->name;
-        $products = Product::join('product_brand', 'products.id', '=', 'product_brand.product_id')->where('brand_id', $id)->paginate(2);
 
 
-        return view('brands.index')->with('data', [
-            'brandslist' => $brandsList,
-            'colorsList' => $colorsList,
-            'sidebarTitle' => $sidebarTitle,
-            'name' => $name,
-            'products' => $products
-        ]);
+
+        return view('brands.index')->with(['brandsList'   => $brandsList,
+                                                'colorsList'   => $colorsList,
+                                                'sizesList'    => $sizeList,
+                                                'materialsList'=> $materialsList,
+                                                'name'         => $name,
+                                                'products'     => $products,
+                                                'filters'      => $filtered]);
     }
 
     /**
