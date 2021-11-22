@@ -264,4 +264,15 @@ class CategoryController extends Controller
                 'lte'       => $lte,
                 'sort'      => $sort]]);
     }
+
+    public function search(Request $request) {
+        $search = $request->get('search');
+        $products = Product::where('name', 'like', '%'.$search.'%')
+            ->orWhere('description', 'like', '%'.$search.'%')
+            ->get();
+        $count = $products->count();
+        return view('search')->with(['products' => $products,
+        'count' => $count,
+            'search' => $search]);
+    }
 }
