@@ -32,8 +32,6 @@ class CartController extends Controller
             'price' => $price,
                 'tax_free' => $tax_free]);
         }
-
-
     }
 
     /**
@@ -102,6 +100,11 @@ class CartController extends Controller
         $product = Shopping_cart_content::where('product_id', $request->product);
         $product->delete();
         return redirect('cart');
+    }
+
+    public function changeCount(Request $request)
+    {
+        $count = $request->get('count');
     }
 }
 
