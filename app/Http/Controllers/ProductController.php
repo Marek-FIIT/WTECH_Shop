@@ -56,14 +56,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $content = $request->session()->get('content');
-        if (empty($content)) {
-            $request->session()->put('content', []);
-        }
-        $sub = 0;
-        if ($sub == 0) {
-            $request->session()->push('content', [$request->id, 1]);
-        }
+
         if (Auth::check()) {
             $cart = Shopping_cart::where('user_id', auth()->user()->id)->first();
             if (empty($cart)) {
@@ -77,7 +70,28 @@ class ProductController extends Controller
                 $product = Shopping_cart_content::where('id', $product->id)->increment('product_count', 1);
             }
         }
+        else {
+            $content = $request->session()->get('content');
+            if (empty($content)) {
+                $request->session()->put('content', []);
+                $request->session()->put('count', []);
+            }
 
+            if(in_array([$request->id], session('content'))) {
+                $key = array_search([$request->id], session('content'));
+                $arr = session()->get('count');
+                $arr[$key] = $arr[$key]+1;
+                $request->session()->put('count', $arr);
+            }
+            else {
+                $request->session()->push('content', [$request->id]);
+                $request->session()->push('count', 1);
+
+                echo 'pridane';
+            }
+        }
         return redirect('/products/' . $request->id);
+
+
     }
 }
